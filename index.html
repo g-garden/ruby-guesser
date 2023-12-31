@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Ruby Guesser</title>
+</head>
+<header>
+    <h1>What is this method?</h1>
+</header>
+<body>
+    <div class="quiz-container">
+        <div class="hints-container" id="hints-container">
+            <!-- insert hint-->
+        </div>
+        <div class="answer-container">
+            <input type="text" id="answer-input" placeholder="Your answer">
+            <button id="answer-button">Guess!!</button>
+            <div class="answer-log" id="answer-log"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@ruby/3.3-wasm-wasi@latest/dist/browser.script.iife.js"></script>
+    <script type="text/ruby" src="main.rb"></script>
+</body>
+</html>
