@@ -21,7 +21,7 @@ class Quiz
         methods = klass.methods
         method = methods.sample
         puts method # Debug
-        {klass: klass, method: method.to_s}
+        { klass: klass, method: method.to_s }
     end
 
     def generate_hints
@@ -30,10 +30,11 @@ class Quiz
             { desc: '#arity', content: @answer[:klass].method(@answer[:method]).arity },
             { desc: '#owner', content: @answer[:klass].method(@answer[:method]).owner },
             { desc: '#parameters', content: @answer[:klass].method(@answer[:method]).parameters },
+            { desc: '#length.even?', content: @answer[:method].length.even? },
             { desc: '#length', content: @answer[:method].length },
-            { desc: '[0]', content: @answer[:method][0] },
-            { desc: '[-1]', content: @answer[:method][-1] },
-            { desc: 'underbar_count', content: @answer[:method].chars.count('_') },
+            { desc: '#chars.first', content: @answer[:method].chars.first },
+            { desc: '#chars.last', content: @answer[:method].chars.last },
+            { desc: '#chars.count(\'_\')', content: @answer[:method].chars.count('_') },
             { desc: 'underbar_position', content: @answer[:method].gsub(/[^_]/, '○') },
         ]
     end
