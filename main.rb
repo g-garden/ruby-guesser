@@ -77,3 +77,5 @@ document.getElementById('answer-button').addEventListener('click') do
         document.getElementById('answer-log').prepend(li)
     end
 end
+
+document.getElementById('ruby-version')[:innerText] = "RUBY_VERSION: #{RUBY_VERSION}"
