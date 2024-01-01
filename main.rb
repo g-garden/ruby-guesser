@@ -18,7 +18,7 @@ class Quiz
     def generate_answer
         klasses = [String, Array]
         klass = klasses.sample
-        methods = klass.methods
+        methods = klass.instance_methods
         method = methods.sample
         puts method # Debug
         { klass: klass, method: method.to_s }
@@ -27,9 +27,9 @@ class Quiz
     def generate_hints
         [
             { desc: '#class', content: @answer[:klass] },
-            { desc: '#arity', content: @answer[:klass].method(@answer[:method]).arity },
-            { desc: '#owner', content: @answer[:klass].method(@answer[:method]).owner },
-            { desc: '#parameters', content: @answer[:klass].method(@answer[:method]).parameters },
+            { desc: '#arity', content: @answer[:klass].new.method(@answer[:method]).arity },
+            { desc: '#owner', content: @answer[:klass].new.method(@answer[:method]).owner },
+            { desc: '#parameters', content: @answer[:klass].new.method(@answer[:method]).parameters },
             { desc: '#length.even?', content: @answer[:method].length.even? },
             { desc: '#length', content: @answer[:method].length },
             { desc: '#chars.first', content: @answer[:method].chars.first },
