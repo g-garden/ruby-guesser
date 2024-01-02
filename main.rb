@@ -3,6 +3,10 @@ require "js"
 class Quiz
     attr_reader :hints, :is_corrected, :answer_log, :point
 
+    KLASSES = [Array, Dir, File, Hash, Integer, Float, Random, Range, Regexp, String, Symbol, Thread, Time]
+    EXCLUDE_KLASSES = [Module, Object, Class]
+    private_constant :KLASSES
+
     def initialize
         @answer = generate_answer
         @hints = generate_hints
@@ -23,31 +27,35 @@ class Quiz
     private
 
     def generate_answer
-        klasses = [String, Array]
-        klass = klasses.sample
-        methods = klass.instance_methods
+        klass = KLASSES.sample
+        puts klass # Debug
+        is_instance = klass.singleton_methods.size.zero? ? true : [true, false].sample
+        puts is_instance # Debug
+        methods = (is_instance ? klass.instance_methods : klass.methods) - EXCLUDE_KLASSES.flat_map(&:instance_methods)
         method = methods.sample
         puts method # Debug
-        { klass: klass, method: method.to_s }
+        method = is_instance ? klass.instance_method(method) : klass.method(method)
+        { klass: klass, method: method, method_str: method.name.to_s, is_instance: is_instance }
     end
 
     def generate_hints
         [
-            { cost: 200, desc: '#class', content: @answer[:klass] },
-            { cost: 300, desc: '#owner', content: @answer[:klass].new.method(@answer[:method]).owner },
-            { cost: 100, desc: '#arity', content: @answer[:klass].new.method(@answer[:method]).arity },
-            { cost: 200, desc: '#parameters', content: @answer[:klass].new.method(@answer[:method]).parameters },
-            { cost: 100, desc: '#length', content: @answer[:method].length },
-            { cost: 200, desc: '#chars.first', content: @answer[:method].chars.first },
-            { cost: 300, desc: '#chars.last', content: @answer[:method].chars.last },
-            { cost: 200, desc: '#chars.count(\'_\')', content: @answer[:method].chars.count('_') },
-            { cost: 500, desc: '#chars.shuffle', content: @answer[:method].chars.shuffle },
-            { cost: 800, desc: 'underbar_position', content: @answer[:method].gsub(/[^_]/, '○') },
+            { cost: 200, desc: 'is_instance_method?', content: @answer[:is_instance]},
+            { cost: 200, desc: 'class', content: @answer[:klass] },
+            { cost: 300, desc: '#owner', content: @answer[:method].owner },
+            { cost: 100, desc: '#arity', content: @answer[:method].arity },
+            { cost: 200, desc: '#parameters', content: @answer[:method].parameters },
+            { cost: 100, desc: '#length', content: @answer[:method_str].length },
+            { cost: 200, desc: '#chars.first', content: @answer[:method_str].chars.first },
+            { cost: 300, desc: '#chars.last', content: @answer[:method_str].chars.last },
+            { cost: 200, desc: '#chars.count(\'_\')', content: @answer[:method_str].chars.count('_') },
+            { cost: 500, desc: '#chars.shuffle', content: @answer[:method_str].chars.shuffle },
+            { cost: 800, desc: 'underbar_position', content: @answer[:method_str].gsub(/[^_]/, '○') },
         ]
     end
 
     def is_correct?(input_answer)
-        input_answer.to_s == @answer[:method]
+        input_answer.to_s == @answer[:method_str]
     end
 end
 
