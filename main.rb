@@ -7,6 +7,8 @@ class Quiz
     EXCLUDE_KLASSES = [Module, Object, Class]
     private_constant :KLASSES
 
+    Hint = Data.define(:cost, :desc, :content)
+
     def initialize
         @answer = generate_answer
         @hints = generate_hints
@@ -21,7 +23,7 @@ class Quiz
     end
 
     def hint!(hint)
-        @point -= hint[:cost]
+        @point -= hint.cost
     end
 
     private
@@ -38,24 +40,24 @@ class Quiz
         { klass: klass, method: method, method_str: method.name.to_s, is_instance: is_instance }
     end
 
-    def generate_hints
-        [
-            { cost: 200, desc: 'is_instance_method?', content: @answer[:is_instance]},
-            { cost: 200, desc: 'class', content: @answer[:klass] },
-            { cost: 300, desc: '#owner', content: @answer[:method].owner },
-            { cost: 100, desc: '#arity', content: @answer[:method].arity },
-            { cost: 200, desc: '#parameters', content: @answer[:method].parameters },
-            { cost: 100, desc: '#length', content: @answer[:method_str].length },
-            { cost: 200, desc: '#chars.first', content: @answer[:method_str].chars.first },
-            { cost: 300, desc: '#chars.last', content: @answer[:method_str].chars.last },
-            { cost: 200, desc: '#chars.count(\'_\')', content: @answer[:method_str].chars.count('_') },
-            { cost: 500, desc: '#chars.shuffle', content: @answer[:method_str].chars.shuffle },
-            { cost: 800, desc: 'underbar_position', content: @answer[:method_str].gsub(/[^_]/, '○') },
-        ]
-    end
-
     def is_correct?(input_answer)
         input_answer.to_s == @answer[:method_str]
+    end
+
+    def generate_hints
+        [
+            Hint.new(200, 'is_instance_method?', @answer[:is_instance]),
+            Hint.new(200, 'class', @answer[:klass]),
+            Hint.new(300, '#owner', @answer[:method].owner),
+            Hint.new(100, '#arity', @answer[:method].arity),
+            Hint.new(200, '#parameters', @answer[:method].parameters),
+            Hint.new(100, '#length', @answer[:method_str].length),
+            Hint.new(200, '#chars.first', @answer[:method_str].chars.first),
+            Hint.new(300, '#chars.last', @answer[:method_str].chars.last),
+            Hint.new(200, '#chars.count(\'_\')', @answer[:method_str].chars.count('_')),
+            Hint.new(500, '#chars.shuffle', @answer[:method_str].chars.shuffle),
+            Hint.new(800, 'underbar_position', @answer[:method_str].gsub(/[^_]/, '○')),
+        ].sort_by(&:cost)
     end
 end
 
@@ -86,13 +88,13 @@ class QuizView
                 div[:className] = 'hint'
                 document.createElement('button').tap do |button|
                     button[:className] = 'hint-button'
-                    button[:innerText] = "#{hint[:desc]} <#{hint[:cost]}>"
+                    button[:innerText] = "#{hint.desc} <#{hint.cost}>"
                     button.addEventListener('click') do
                         @quiz.hint!(hint)
                         update_score!
                         document.createElement('p').tap do |p|
                             p[:className] = 'hint-text'
-                            p[:innerText] = hint[:content].to_s
+                            p[:innerText] = hint.content.to_s
                             div.appendChild(p)
                         end
                     end
