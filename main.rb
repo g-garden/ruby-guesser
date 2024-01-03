@@ -114,7 +114,7 @@ class QuizView
 
             document.createElement('li').tap do |li|
                 li[:innerText] = log_text
-                document.getElementById('answer-log').prepend(li)
+                document.getElementById('answer-log-list').prepend(li)
             end
         end
     end
