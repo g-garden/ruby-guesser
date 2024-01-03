@@ -25,15 +25,15 @@
             </template>
             <!-- insert hint-->
         </menu>
-        <div class="answer-container">
+        <form onsubmit="return false" class="answer-container">
             <input type="text" id="answer-input" placeholder="Your answer">
-            <button id="answer-button">Guess!!</button>
+            <button type="reset" id="answer-button">Guess!!</button>
             <div class="answer-log">
                 <ol reversed id="answer-log-list">
                     <!-- insert answer log -->
                 </ol>
             </div>
-        </div>
+        </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@ruby/3.3-wasm-wasi@latest/dist/browser.script.iife.js"></script>
     <script type="text/ruby" src="main.rb"></script>
