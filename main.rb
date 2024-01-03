@@ -84,8 +84,8 @@ class QuizView
     def create_hints
         hints_container = document.getElementById('hints-container')
         @quiz.hints.each do |hint|
-            document.createElement('div').tap do |div|
-                div[:className] = 'hint'
+            document.createElement('li').tap do |li|
+                li[:className] = 'hint'
                 document.createElement('button').tap do |button|
                     button[:className] = 'hint-button'
                     button[:innerText] = "#{hint.desc} <#{hint.cost}>"
@@ -95,12 +95,12 @@ class QuizView
                         document.createElement('p').tap do |p|
                             p[:className] = 'hint-text'
                             p[:innerText] = hint.content.to_s
-                            div.appendChild(p)
+                            li.appendChild(p)
                         end
                     end
-                    div.appendChild(button)
+                    li.appendChild(button)
                 end
-                document.getElementById('hints-container').appendChild(div)
+                document.getElementById('hints-container').appendChild(li)
             end
         end
     end
