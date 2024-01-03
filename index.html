@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,12 @@
     </div>
     <div class="quiz-container">
         <menu class="hints-container" id="hints-container">
+            <template id="hint-template">
+                <li class="hint">
+                    <button class="hint-button"></button>
+                    <p class="hint-content"></p>
+                </li>
+            </template>
             <!-- insert hint-->
         </menu>
         <div class="answer-container">
@@ -34,4 +41,5 @@
         <p id="ruby-version"></p>
     </footer>
 </body>
+
 </html>

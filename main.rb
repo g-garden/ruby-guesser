@@ -83,26 +83,21 @@ class QuizView
 
     def create_hints
         hints_container = document.getElementById('hints-container')
+        template = document.querySelector('#hint-template')
         @quiz.hints.each do |hint|
-            document.createElement('li').tap do |li|
-                li[:className] = 'hint'
-                document.createElement('button').tap do |button|
-                    button[:className] = 'hint-button'
-                    button[:innerText] = "#{hint.desc} <#{hint.cost}>"
-                    button.addEventListener('click') do
-                        @quiz.hint!(hint)
-                        update_score!
-                        document.createElement('p').tap do |p|
-                            p[:className] = 'hint-text'
-                            p[:innerText] = hint.content.to_s
-                            li.appendChild(p)
-                        end
-                    end
-                    li.appendChild(button)
-                end
-                document.getElementById('hints-container').appendChild(li)
+            clone = template[:content].cloneNode(true)
+            button = clone.querySelector('.hint-button')
+            button[:innerText] = "#{hint.desc} <#{hint.cost}>"
+            hint_content = clone.querySelector('.hint-content')
+            button.addEventListener('click') do
+                @quiz.hint!(hint)
+                update_score!
+                button[:disabled] = true
+                hint_content[:innerText] = hint.content.to_s
             end
+            hints_container.appendChild(clone)
         end
+
     end
 
     def add_answer_event
