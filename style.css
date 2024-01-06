@@ -10,7 +10,7 @@ header small {
 body {
     font-family: monospace;
     margin: 0;
-    padding: 0;
+    padding: 10px;
     background-color: black;
     color: white;
 }
@@ -29,14 +29,11 @@ body {
     margin-bottom: 20px;
     height: max-content;
     padding-inline-start: 0.25em;
+    list-style-type: none;
 }
 
 .hint {
     margin-right: 100px;
-}
-
-li.hint::marker {
-    content: none;
 }
 
 .hint-button {
@@ -49,8 +46,8 @@ li.hint::marker {
     margin-bottom: 5px;
 }
 
-li.hint-content::marker {
-    content: "=> ";
+li.hint-content {
+    list-style-type: "=> ";
 }
 
 #answer-input {
