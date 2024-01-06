@@ -1,7 +1,10 @@
-:root 
-
-header {
+:root header h1 {
     text-align: center;
+}
+
+header small {
+    text-align: right;
+    display: block;
 }
 
 body {
@@ -21,14 +24,17 @@ body {
 
 .hints-container {
     display: flex;
+    border: 1px solid #ddd;
     flex-direction: column;
     margin-bottom: 20px;
-    font-size: large;
+    height: max-content;
+    padding-inline-start: 0.25em;
 }
 
 .hint {
-    margin-bottom: 0px;
+    margin-right: 100px;
 }
+
 li.hint::marker {
     content: none;
 }
@@ -42,6 +48,7 @@ li.hint::marker {
 .hint-content {
     margin-bottom: 5px;
 }
+
 li.hint-content::marker {
     content: "=> ";
 }
@@ -65,10 +72,3 @@ li.hint-content::marker {
     width: 300px;
 }
 
-footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-}
