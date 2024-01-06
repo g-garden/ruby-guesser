@@ -53,15 +53,25 @@ li.hint-content::marker {
     content: "=> ";
 }
 
-.answer-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 #answer-input {
+    display: inline-block;
+    margin-right: auto;
+    margin-left: auto;
     margin-bottom: 10px;
     padding: 5px;
+    width: 200px;
+}
+
+button#answer-button {
+    display: inline-block;
+    margin-right: auto;
+    margin-left: auto;
+    cursor: pointer;
+}
+
+button.restart-button {
+    display: block;
+    margin: auto;
 }
 
 .answer-log {
@@ -69,6 +79,6 @@ li.hint-content::marker {
     overflow-y: auto;
     border: 1px solid #ddd;
     padding: 10px;
-    width: 300px;
+    margin-top: 10px;
 }
 

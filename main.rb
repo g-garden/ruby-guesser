@@ -97,11 +97,11 @@ class QuizView
             end
             hints_container.appendChild(clone)
         end
-
     end
 
     def add_answer_event
-        document.getElementById('answer-button').addEventListener('click') do
+        answer_button = document.getElementById('answer-button')
+        answer_button.addEventListener('click') do
             input_answer = document.getElementById('answer-input')[:value]
             @quiz.answer!(input_answer)
             update_score!
@@ -111,6 +111,19 @@ class QuizView
                 li[:innerText] = log_text
                 document.getElementById('answer-log-list').prepend(li)
             end
+
+            if @quiz.is_corrected
+                answer_button[:disabled] = true
+                document.getElementById('answer-input')[:disabled] = true
+                document.createElement('button').tap do |button|
+                    button[:className] = 'restart-button'
+                    button[:innerText] = 'restart!'
+                    button.addEventListener('click') do
+                        JS.global[:location].reload
+                    end
+                    document.getElementById('answer-form').appendChild(button)
+                end
+            end
         end
     end
 
@@ -119,5 +132,11 @@ class QuizView
     end
 end
 
-quiz = Quiz.new
-quiz_view = QuizView.new(quiz)
+class QuizController
+    def initialize
+        @quiz = Quiz.new
+        @quiz_view = QuizView.new(@quiz)
+    end
+end
+
+QuizController.new

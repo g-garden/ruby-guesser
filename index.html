@@ -21,20 +21,23 @@
             <template id="hint-template">
                 <li class="hint">
                     <button class="hint-button"></button>
-                    <li class="hint-content"></li>
+                <li class="hint-content"></li>
                 </li>
             </template>
             <!-- insert hint-->
         </menu>
-        <form onsubmit="return false" class="answer-container">
-            <input type="text" id="answer-input" placeholder="Your answer">
-            <button type="reset" id="answer-button">Guess!!</button>
+        <div class="answer-container">
+            <form onsubmit="return false" id="answer-form">
+                <input type="text" id="answer-input" placeholder="method.name.to_s">
+                <button type="reset" id="answer-button">guess!</button>
+            </form>
             <div class="answer-log">
                 <ol reversed id="answer-log-list">
                     <!-- insert answer log -->
                 </ol>
             </div>
-        </form>
+        </div>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@ruby/3.3-wasm-wasi@latest/dist/browser.script.iife.js"></script>
     <script type="text/ruby" src="main.rb"></script>
