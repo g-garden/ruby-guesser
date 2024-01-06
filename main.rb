@@ -5,7 +5,8 @@ class Quiz
 
     KLASSES = [Array, Dir, File, Hash, Integer, Float, Random, Range, Regexp, String, Symbol, Thread, Time]
     EXCLUDE_KLASSES = [Module, Object, Class]
-    private_constant :KLASSES
+    ANSWER_COST = 100
+    private_constant :KLASSES, :EXCLUDE_KLASSES, :ANSWER_COST
 
     Hint = Data.define(:cost, :desc, :content)
 
@@ -13,13 +14,13 @@ class Quiz
         @answer = generate_answer
         @hints = generate_hints
         @answer_log = []
-        @point = 3000
+        @point = @hints.sum(&:cost) + ANSWER_COST # ヒントを全て使ってちょうど 0 になるように
     end
 
     def answer!(answer_text)
         @is_corrected ||= is_correct?(answer_text)
         @answer_log << answer_text
-        @point -= 100 unless is_correct?(answer_text)
+        @point -= ANSWER_COST unless is_correct?(answer_text)
     end
 
     def hint!(hint)
@@ -46,9 +47,9 @@ class Quiz
 
     def generate_hints
         [
-            Hint.new(200, 'is_instance_method?', @answer[:is_instance]),
             Hint.new(200, 'class', @answer[:klass]),
             Hint.new(300, '#owner', @answer[:method].owner),
+            Hint.new(200, 'is_instance_method?', @answer[:is_instance]),
             Hint.new(100, '#arity', @answer[:method].arity),
             Hint.new(200, '#parameters', @answer[:method].parameters),
             Hint.new(100, '#length', @answer[:method_str].length),
