@@ -11,44 +11,87 @@
 
         gtag('config', 'G-CB24NSHHBY');
     </script>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <title>Ruby Guesser</title>
+    <title>Ruby Method Guesser - Can you guess the method?</title>
 </head>
 
 <body>
-    <header>
-        <h1>What is this ruby method?</h1>
-        <small id="ruby-version"></small>
-    </header>
-    <div class="score-container">
-        <div class="score" id="score"></div>
-    </div>
-    <div class="quiz-container">
-        <menu class="hints-container" id="hints-container">
-            <template id="hint-template">
-                <li class="hint">
-                    <button class="hint-button"></button>
-                </li>
-                <li class="hint-content"></li>
-            </template>
-            <!-- insert hint-->
-        </menu>
-        <div class="answer-container">
-            <form onsubmit="return false" id="answer-form">
-                <input type="text" id="answer-input" placeholder="method.name.to_s">
-                <button type="reset" id="answer-button">guess!</button>
-            </form>
-            <div class="answer-log">
-                <ol reversed id="answer-log-list">
-                    <!-- insert answer log -->
-                </ol>
+    <div class="bg-animation"></div>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <h1>🔮 Ruby Method Guesser</h1>
+                <small id="ruby-version"></small>
+            </div>
+            <p class="tagline">Guess the Ruby method and become a master!</p>
+        </header>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Current Score</div>
+                <div class="stat-value" id="score">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Best Score</div>
+                <div class="stat-value" id="best-score">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Streak</div>
+                <div class="stat-value" id="streak">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Level</div>
+                <div class="stat-value" id="level">1</div>
             </div>
         </div>
 
+        <div class="quiz-container">
+            <div class="hints-card">
+                <h2 class="section-title">💡 Hints</h2>
+                <menu class="hints-container" id="hints-container">
+                    <template id="hint-template">
+                        <li class="hint">
+                            <button class="hint-button"></button>
+                        </li>
+                        <li class="hint-content"></li>
+                    </template>
+                    <!-- insert hint-->
+                </menu>
+            </div>
+
+            <div class="answer-card">
+                <h2 class="section-title">🎯 Your Answer</h2>
+                <form onsubmit="return false" id="answer-form">
+                    <div class="input-group">
+                        <input type="text" id="answer-input" placeholder="method_name" autocomplete="off">
+                        <button type="reset" id="answer-button">
+                            <span class="button-text">Guess!</span>
+                            <span class="button-icon">🚀</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="answer-log-wrapper">
+                    <h3 class="log-title">📝 Answer History</h3>
+                    <div class="answer-log">
+                        <ol reversed id="answer-log-list">
+                            <!-- insert answer log -->
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Confetti Canvas for celebration -->
+    <canvas id="confetti-canvas"></canvas>
+
     <script src="https://cdn.jsdelivr.net/npm/@ruby/3.3-wasm-wasi@latest/dist/browser.script.iife.js"></script>
     <script type="text/ruby" src="main.rb"></script>
 </body>
