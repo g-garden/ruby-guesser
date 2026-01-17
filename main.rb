@@ -177,22 +177,30 @@ class QuizView
     def create_hints
         hints_container = document.getElementById('hints-container')
         template = document.querySelector('#hint-template')
-        @quiz.hints.each do |hint|
+        @quiz.hints.each_with_index do |hint, index|
             clone = template[:content].cloneNode(true)
             button = clone.querySelector('.hint-button')
+            hint_content = clone.querySelector('.hint-content')
+
+            # 一意のIDを設定
+            hint_content_id = "hint-content-#{index}"
+            hint_content[:id] = hint_content_id
             button[:innerText] = "#{hint.desc} <#{hint.cost}>"
+
+            # DOMに追加
+            hints_container.appendChild(clone)
+
+            # イベントリスナーを追加（DOM追加後）
             button.addEventListener('click') do
                 @quiz.hint!(hint)
                 update_score!
                 animate_score!(false)
                 button[:disabled] = true
 
-                # DOMに追加された実際の要素を取得
-                hint_li = button[:parentElement]
-                hint_content_li = hint_li[:nextElementSibling]
-                hint_content_li[:innerText] = hint.content.to_s
+                # DOMから直接取得
+                content_element = document.getElementById(hint_content_id)
+                content_element[:innerText] = hint.content.to_s
             end
-            hints_container.appendChild(clone)
         end
     end
 
