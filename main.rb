@@ -181,13 +181,16 @@ class QuizView
             clone = template[:content].cloneNode(true)
             button = clone.querySelector('.hint-button')
             button[:innerText] = "#{hint.desc} <#{hint.cost}>"
-            hint_content = clone.querySelector('.hint-content')
             button.addEventListener('click') do
                 @quiz.hint!(hint)
                 update_score!
                 animate_score!(false)
                 button[:disabled] = true
-                hint_content[:innerText] = hint.content.to_s
+
+                # DOMに追加された実際の要素を取得
+                hint_li = button[:parentElement]
+                hint_content_li = hint_li[:nextElementSibling]
+                hint_content_li[:innerText] = hint.content.to_s
             end
             hints_container.appendChild(clone)
         end
