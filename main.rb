@@ -42,14 +42,12 @@ class GameStats
     private
 
     def load_from_storage(key)
-        storage = JS.global[:localStorage]
-        value = storage.getItem("rubyGuesser_#{key}")
-        value.nil? ? '0' : value.to_s
+        result = JS.eval("localStorage.getItem('rubyGuesser_#{key}')")
+        result.nil? || result.to_s == 'null' ? '0' : result.to_s
     end
 
     def save_to_storage(key, value)
-        storage = JS.global[:localStorage]
-        storage.setItem("rubyGuesser_#{key}", value.to_s)
+        JS.eval("localStorage.setItem('rubyGuesser_#{key}', '#{value}')")
     end
 end
 
