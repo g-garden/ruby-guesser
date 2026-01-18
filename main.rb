@@ -169,9 +169,9 @@ class QuizView
         score_element[:classList].remove('score-up')
         score_element[:classList].remove('score-down')
 
-        JS.global[:setTimeout].call(-> {
-            score_element[:classList].add(is_up ? 'score-up' : 'score-down')
-        }, 10)
+        # CSSアニメーションをトリガーするためにsetTimeoutを使用
+        class_name = is_up ? 'score-up' : 'score-down'
+        JS.eval("setTimeout(function() { document.getElementById('score').classList.add('#{class_name}'); }, 10);")
     end
 
     def create_hints
