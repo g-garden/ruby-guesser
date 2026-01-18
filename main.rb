@@ -274,16 +274,27 @@ class QuizView
     end
 
     def add_answer_event
-        answer_button = document.getElementById('answer-button')
-        answer_button.addEventListener('click') do
-            input_answer = document.getElementById('answer-input')[:value]
+        JS.eval(<<~JS)
+            document.getElementById('answer-button').addEventListener('click', function(e) {
+                const input = document.getElementById('answer-input');
+                const inputAnswer = input.value.trim();
 
-            return if input_answer.empty?
+                if (inputAnswer === '') return;
 
-            @quiz.answer!(input_answer)
+                // RubyのメソッドをJavaScript経由で呼び出す
+                window.rubyQuizView.processAnswer(inputAnswer);
+
+                input.value = '';
+            });
+        JS
+
+        # RubyのメソッドをJavaScriptから呼び出せるようにする
+        JS.global[:window][:rubyQuizView] = JS.global[:Object].new
+        JS.global[:window][:rubyQuizView][:processAnswer] = proc do |input_answer|
+            @quiz.answer!(input_answer.to_s)
             update_all_stats!
 
-            is_correct = @quiz.is_corrected && @quiz.answer_log.last == input_answer
+            is_correct = @quiz.is_corrected && @quiz.answer_log.last.to_s == input_answer.to_s
 
             if is_correct
                 animate_score!(true)
@@ -293,28 +304,29 @@ class QuizView
 
             log_text = "#{is_correct ? '✅' : '❌'} #{input_answer}"
 
-            document.createElement('li').tap do |li|
-                li[:innerText] = log_text
-                document.getElementById('answer-log-list').prepend(li)
-            end
+            # JavaScriptで直接DOM操作
+            JS.eval(<<~JS)
+                const li = document.createElement('li');
+                li.innerText = '#{log_text.gsub("'", "\\'")}';
+                document.getElementById('answer-log-list').prepend(li);
+            JS
 
             if @quiz.is_corrected
                 trigger_confetti
-                answer_button[:disabled] = true
-                document.getElementById('answer-input')[:disabled] = true
+                JS.eval(<<~JS)
+                    document.getElementById('answer-button').disabled = true;
+                    document.getElementById('answer-input').disabled = true;
 
-                document.createElement('button').tap do |button|
-                    button[:className] = 'restart-button'
-                    button[:innerText] = '🎉 Next Challenge! 🎉'
-                    button.addEventListener('click') do
-                        JS.eval("location.reload()")
-                    end
-                    document.querySelector('.input-group').appendChild(button)
-                end
+                    const button = document.createElement('button');
+                    button.className = 'restart-button';
+                    button.innerText = '🎉 Next Challenge! 🎉';
+                    button.addEventListener('click', function() {
+                        location.reload();
+                    });
+                    document.querySelector('.input-group').appendChild(button);
+                JS
             end
-
-            document.getElementById('answer-input')[:value] = ''
-        end
+        end.to_js
     end
 
     def set_ruby_version
