@@ -307,7 +307,7 @@ class QuizView
                     button[:className] = 'restart-button'
                     button[:innerText] = '🎉 Next Challenge! 🎉'
                     button.addEventListener('click') do
-                        JS.global[:location].reload
+                        JS.eval("location.reload()")
                     end
                     document.querySelector('.input-group').appendChild(button)
                 end
