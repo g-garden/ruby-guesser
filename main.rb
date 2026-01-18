@@ -165,13 +165,12 @@ class QuizView
     end
 
     def animate_score!(is_up)
-        score_element = document.getElementById('score')
-        score_element[:classList].remove('score-up')
-        score_element[:classList].remove('score-down')
-
-        # CSSアニメーションをトリガーするためにsetTimeoutを使用
-        class_name = is_up ? 'score-up' : 'score-down'
-        JS.eval("setTimeout(function() { document.getElementById('score').classList.add('#{class_name}'); }, 10);")
+        # アニメーションを一時的に無効化してエラー原因を特定
+        # score_element = document.getElementById('score')
+        # score_element[:classList].remove('score-up')
+        # score_element[:classList].remove('score-down')
+        # class_name = is_up ? 'score-up' : 'score-down'
+        # JS.eval("setTimeout(function() { document.getElementById('score').classList.add('#{class_name}'); }, 10);")
     end
 
     def create_hints
