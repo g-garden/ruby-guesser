@@ -169,30 +169,39 @@ class QuizView
         score_element[:classList].remove('score-up')
         score_element[:classList].remove('score-down')
 
-        JS.global[:setTimeout].call(-> {
-            score_element[:classList].add(is_up ? 'score-up' : 'score-down')
-        }, 10)
+        # CSSアニメーションをトリガーするためにsetTimeoutを使用
+        class_name = is_up ? 'score-up' : 'score-down'
+        JS.eval("setTimeout(function() { document.getElementById('score').classList.add('#{class_name}'); }, 10);")
     end
 
     def create_hints
         hints_container = document.getElementById('hints-container')
         template = document.querySelector('#hint-template')
-        @quiz.hints.each do |hint|
+        @quiz.hints.each_with_index do |hint, index|
             clone = template[:content].cloneNode(true)
             button = clone.querySelector('.hint-button')
+            hint_content = clone.querySelector('.hint-content')
+
+            # 一意のIDを設定
+            content_id = "hint-content-#{index}"
+            hint_content[:id] = content_id
             button[:innerText] = "#{hint.desc} <#{hint.cost}>"
-            button.addEventListener('click') do
+
+            # DOMに追加
+            hints_container.appendChild(clone)
+
+            # DOMに追加後、実際の要素を取得してイベントリスナーを設定
+            actual_button = hints_container.querySelectorAll('.hint-button')[index]
+            actual_button.addEventListener('click') do
                 @quiz.hint!(hint)
                 update_score!
                 animate_score!(false)
-                button[:disabled] = true
+                actual_button[:disabled] = true
 
-                # DOMに追加された実際の要素を取得
-                hint_li = button[:parentElement]
-                hint_content_li = hint_li[:nextElementSibling]
-                hint_content_li[:innerText] = hint.content.to_s
+                # IDで確実に取得
+                content_element = document.getElementById(content_id)
+                content_element[:innerText] = hint.content.to_s
             end
-            hints_container.appendChild(clone)
         end
     end
 
