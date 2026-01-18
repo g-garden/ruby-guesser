@@ -76,14 +76,18 @@ class Quiz
         @is_corrected ||= was_correct
         @answer_log << answer_text
 
-        if was_correct
-            @game_stats.increment_streak!
-            @game_stats.increment_total_correct!
-            @game_stats.update_best_score!(@point)
-        else
-            @point -= ANSWER_COST
-            @game_stats.reset_streak!
-        end
+        # デバッグ: スコア計算を一時的にコメントアウト
+        # if was_correct
+        #     @game_stats.increment_streak!
+        #     @game_stats.increment_total_correct!
+        #     @game_stats.update_best_score!(@point)
+        # else
+        #     @point -= ANSWER_COST
+        #     @game_stats.reset_streak!
+        # end
+
+        # 暫定的にスコアだけ減らす
+        @point -= ANSWER_COST unless was_correct
     end
 
     def hint!(hint)
