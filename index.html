@@ -23,6 +23,7 @@
 
 <body>
     <div class="bg-animation"></div>
+
     <div class="container">
         <header>
             <div class="header-top">
@@ -33,64 +34,70 @@
         </header>
 
         <div class="stats-row">
+            <div class="stat-card life-card">
+                <div class="stat-value" id="life">
+                    <span class="heart active">❤️</span>
+                    <span class="heart active">❤️</span>
+                    <span class="heart active">❤️</span>
+                </div>
+                <div class="life-history" id="answer-log-list">
+                    <!-- insert answer log -->
+                </div>
+            </div>
             <div class="stat-card">
-                <div class="stat-label">Current Score</div>
+                <div class="stat-label">Score</div>
                 <div class="stat-value" id="score">0</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Best Score</div>
+                <div class="stat-label">Best</div>
                 <div class="stat-value" id="best-score">0</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Streak</div>
                 <div class="stat-value" id="streak">0</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Level</div>
-                <div class="stat-value" id="level">1</div>
-            </div>
         </div>
 
-        <div class="quiz-container">
-            <div class="hints-card">
-                <h2 class="section-title">💡 Hints</h2>
-                <menu class="hints-container" id="hints-container">
-                    <template id="hint-template">
-                        <li class="hint">
-                            <button class="hint-button"></button>
-                        </li>
-                        <li class="hint-content"></li>
-                    </template>
-                    <!-- insert hint-->
-                </menu>
-            </div>
-
-            <div class="answer-card">
-                <h2 class="section-title">🎯 Your Answer</h2>
-                <form onsubmit="return false" id="answer-form">
-                    <div class="input-group">
-                        <input type="text" id="answer-input" placeholder="method_name" autocomplete="off">
-                        <button type="reset" id="answer-button">
-                            <span class="button-text">Guess!</span>
-                            <span class="button-icon">🚀</span>
-                        </button>
-                    </div>
-                </form>
-
-                <div class="answer-log-wrapper">
-                    <h3 class="log-title">📝 Answer History</h3>
-                    <div class="answer-log">
-                        <ol reversed id="answer-log-list">
-                            <!-- insert answer log -->
-                        </ol>
-                    </div>
+        <!-- 回答エリア（常に表示） -->
+        <div class="answer-section">
+            <form onsubmit="return false" id="answer-form">
+                <div class="input-group">
+                    <input type="text" id="answer-input" placeholder="method_name" autocomplete="off">
+                    <button type="reset" id="answer-button">
+                        <span class="button-text">Guess!</span>
+                        <span class="button-icon">🚀</span>
+                    </button>
                 </div>
-            </div>
+            </form>
+        </div>
+
+        <!-- ヒントエリア -->
+        <div class="hints-card">
+            <h2 class="section-title">💡 Hints</h2>
+            <template id="hint-template">
+                <li class="hint">
+                    <button class="hint-button"></button>
+                    <div class="hint-content"></div>
+                </li>
+            </template>
+            <menu class="hints-container" id="hints-container">
+                <!-- insert hint-->
+            </menu>
         </div>
     </div>
 
     <!-- Confetti Canvas for celebration -->
     <canvas id="confetti-canvas"></canvas>
+
+    <!-- Game Over Overlay -->
+    <div id="game-over-overlay" class="game-over-overlay hidden">
+        <div class="game-over-content">
+            <h2 class="game-over-title">💀 Game Over 💀</h2>
+            <p class="final-score-text">Final Score: <span id="final-score">0</span></p>
+            <p class="correct-answer-text">The answer was: <span id="correct-answer"></span></p>
+            <button class="restart-button game-over-restart" onclick="location.reload()">🔄 Try Again</button>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@ruby/3.3-wasm-wasi@latest/dist/browser.script.iife.js"></script>
     <script type="text/ruby" src="main.rb"></script>
