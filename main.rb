@@ -84,7 +84,7 @@ end
 
 class Quiz
     attr_reader :hints, :is_corrected, :answer_log, :point, :game_stats, :life, :answer_str
-    attr_reader :answer_klass, :answer_is_instance, :answer_owner
+    attr_reader :answer_klass, :answer_is_instance, :answer_owner, :answer_doc_name
 
     KLASSES = [Array, Dir, File, Hash, Integer, Float, Random, Range, Regexp, String, Symbol, Thread, Time]
     EXCLUDE_KLASSES = [Module, Object, Class]
@@ -102,6 +102,7 @@ class Quiz
         @answer_is_instance = @answer[:is_instance]
         owner_str = @answer[:method].owner.to_s
         @answer_owner = owner_str.match(/#<Class:(.+)>/) ? $1 : owner_str
+        @answer_doc_name = @answer[:method].original_name.to_s
         @hints = generate_hints
         @answer_log = []
         @point = @hints.sum(&:cost) + ANSWER_COST + @game_stats.streak_bonus
@@ -351,6 +352,7 @@ class QuizView
 
     def show_method_info!
         method_name = @quiz.answer_str.gsub("'", "\\'")
+        doc_name = @quiz.answer_doc_name.gsub("'", "\\'")
         klass = @quiz.answer_klass
         owner = @quiz.answer_owner
         is_instance = @quiz.answer_is_instance
@@ -361,9 +363,9 @@ class QuizView
                 var existing = document.querySelector('.method-info');
                 if (existing) existing.remove();
 
-                var methodName = '#{method_name}';
+                var docName = '#{doc_name}';
                 var anchor = ('#{method_type}' === 'i' ? 'I_' : 'S_') +
-                    methodName.replace(/[^a-zA-Z0-9_]/g, function(c) {
+                    docName.replace(/[^a-zA-Z0-9_]/g, function(c) {
                         return '--' + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
                     }).toUpperCase();
                 var doc_url = 'https://docs.ruby-lang.org/ja/3.3/class/#{owner}.html#' + anchor;
@@ -601,6 +603,7 @@ class QuizView
 
     def setup_debug!
         answer = @quiz.answer_str.gsub("'", "\\'")
+        doc_name = @quiz.answer_doc_name.gsub("'", "\\'")
         klass = @quiz.answer_klass
         owner = @quiz.answer_owner
         is_instance = @quiz.answer_is_instance
@@ -610,12 +613,13 @@ class QuizView
         JS.eval(<<~JS)
             window.__debug = {
                 answer: '#{answer}',
+                docName: '#{doc_name}',
                 klass: '#{klass}',
                 owner: '#{owner}',
                 methodType: '#{method_type}',
                 full: '#{owner}#{method_type}#{answer}'
             };
-            console.log('[DEBUG] answer:', window.__debug.full);
+            console.log('[DEBUG] answer:', window.__debug.full, window.__debug.answer !== window.__debug.docName ? '(alias of: ' + window.__debug.docName + ')' : '');
         JS
 
         # ?debug がURLにある場合は画面にも表示
