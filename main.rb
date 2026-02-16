@@ -100,7 +100,8 @@ class Quiz
         @answer_str = @answer[:method_str]
         @answer_klass = @answer[:klass].to_s
         @answer_is_instance = @answer[:is_instance]
-        @answer_owner = @answer[:method].owner.to_s
+        owner_str = @answer[:method].owner.to_s
+        @answer_owner = owner_str.match(/#<Class:(.+)>/) ? $1 : owner_str
         @hints = generate_hints
         @answer_log = []
         @point = @hints.sum(&:cost) + ANSWER_COST + @game_stats.streak_bonus
