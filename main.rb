@@ -361,8 +361,11 @@ class QuizView
                 if (existing) existing.remove();
 
                 var methodName = '#{method_name}';
-                var encodedMethod = encodeURIComponent(methodName).replace(/%/g, '=').toLowerCase();
-                var doc_url = 'https://docs.ruby-lang.org/ja/3.3/method/#{owner}/#{method_type}/' + encodedMethod + '.html';
+                var anchor = ('#{method_type}' === 'i' ? 'I_' : 'S_') +
+                    methodName.replace(/[^a-zA-Z0-9_]/g, function(c) {
+                        return '--' + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
+                    });
+                var doc_url = 'https://docs.ruby-lang.org/ja/3.3/class/#{owner}.html#' + anchor;
 
                 var info = document.createElement('div');
                 info.className = 'method-info';
