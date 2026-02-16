@@ -84,7 +84,7 @@ end
 
 class Quiz
     attr_reader :hints, :is_corrected, :answer_log, :point, :game_stats, :life, :answer_str
-    attr_reader :answer_klass, :answer_is_instance
+    attr_reader :answer_klass, :answer_is_instance, :answer_owner
 
     KLASSES = [Array, Dir, File, Hash, Integer, Float, Random, Range, Regexp, String, Symbol, Thread, Time]
     EXCLUDE_KLASSES = [Module, Object, Class]
@@ -100,6 +100,7 @@ class Quiz
         @answer_str = @answer[:method_str]
         @answer_klass = @answer[:klass].to_s
         @answer_is_instance = @answer[:is_instance]
+        @answer_owner = @answer[:method].owner.to_s
         @hints = generate_hints
         @answer_log = []
         @point = @hints.sum(&:cost) + ANSWER_COST + @game_stats.streak_bonus
@@ -183,6 +184,7 @@ class QuizView
         add_answer_event
         set_ruby_version
         setup_controller_bridge if @controller
+        setup_debug!
     end
 
     def reset_ui!
@@ -196,10 +198,16 @@ class QuizView
             // 回答ログをクリア
             document.getElementById('answer-log-list').innerHTML = '';
 
+            // ボタンを複製して既存のイベントリスナーをすべて削除
+            var oldBtn = document.getElementById('answer-button');
+            var newBtn = oldBtn.cloneNode(false);
+            newBtn.id = 'answer-button';
+            newBtn.innerHTML = '<span class="button-text">Guess!</span><span class="button-icon">🚀</span>';
+            oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+
             // 入力を有効化・クリア
             var btn = document.getElementById('answer-button');
             btn.disabled = false;
-            btn.innerHTML = '<span class="button-text">Guess!</span><span class="button-icon">🚀</span>';
             btn.classList.remove('next-button');
 
             document.getElementById('answer-input').disabled = false;
@@ -343,14 +351,18 @@ class QuizView
     def show_method_info!
         method_name = @quiz.answer_str.gsub("'", "\\'")
         klass = @quiz.answer_klass
+        owner = @quiz.answer_owner
         is_instance = @quiz.answer_is_instance
-        method_type = is_instance ? 'i' : 'c'
-        doc_url = "https://ruby-doc.org/3.3.0/#{klass}.html#method-#{method_type}-#{method_name}"
+        method_type = is_instance ? 'i' : 's'
 
         JS.eval(<<~JS)
             (function() {
                 var existing = document.querySelector('.method-info');
                 if (existing) existing.remove();
+
+                var methodName = '#{method_name}';
+                var encodedMethod = encodeURIComponent(methodName).replace(/%/g, '=').toLowerCase();
+                var doc_url = 'https://docs.ruby-lang.org/ja/3.3/method/#{owner}/#{method_type}/' + encodedMethod + '.html';
 
                 var info = document.createElement('div');
                 info.className = 'method-info';
@@ -360,8 +372,8 @@ class QuizView
                         <span class="method-info-type">#{is_instance ? 'instance' : 'class'} method</span>
                     </div>
                     <div class="method-info-name">#{method_name}</div>
-                    <a href="#{doc_url}" target="_blank" class="method-info-link">
-                        📚 View Ruby Documentation
+                    <a href="${doc_url}" target="_blank" class="method-info-link">
+                        📚 Rubyドキュメントを見る
                     </a>
                 `;
                 document.querySelector('.hints-card').appendChild(info);
@@ -581,6 +593,39 @@ class QuizView
 
     def set_ruby_version
         document.getElementById('ruby-version')[:innerText] = "Ruby #{RUBY_VERSION}"
+    end
+
+    def setup_debug!
+        answer = @quiz.answer_str.gsub("'", "\\'")
+        klass = @quiz.answer_klass
+        owner = @quiz.answer_owner
+        is_instance = @quiz.answer_is_instance
+        method_type = is_instance ? '#' : '.'
+
+        # コンソールで常時確認可能
+        JS.eval(<<~JS)
+            window.__debug = {
+                answer: '#{answer}',
+                klass: '#{klass}',
+                owner: '#{owner}',
+                methodType: '#{method_type}',
+                full: '#{owner}#{method_type}#{answer}'
+            };
+            console.log('[DEBUG] answer:', window.__debug.full);
+        JS
+
+        # ?debug がURLにある場合は画面にも表示
+        JS.eval(<<~JS)
+            if (new URLSearchParams(window.location.search).has('debug')) {
+                var existing = document.getElementById('debug-badge');
+                if (existing) existing.remove();
+                var badge = document.createElement('div');
+                badge.id = 'debug-badge';
+                badge.style.cssText = 'position:fixed;bottom:16px;right:16px;background:#1a1a2e;border:1px solid #667eea;border-radius:8px;padding:8px 14px;font-family:monospace;font-size:13px;color:#f0f0f0;z-index:9999;opacity:0.9;';
+                badge.innerHTML = '<span style="color:#aaa;font-size:11px;">answer</span><br><span style="color:#4facfe;font-weight:bold;">#{owner}#{method_type}#{answer}</span>';
+                document.body.appendChild(badge);
+            }
+        JS
     end
 end
 
