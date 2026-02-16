@@ -220,9 +220,9 @@ class QuizView
             var restartBtn = document.querySelector('.input-group .restart-button');
             if (restartBtn) restartBtn.remove();
 
-            // メソッド情報を削除
-            var methodInfo = document.querySelector('.method-info');
-            if (methodInfo) methodInfo.remove();
+            // 正解モーダルを閉じる
+            document.getElementById('correct-modal').classList.add('hidden');
+            document.getElementById('correct-modal-body').innerHTML = '';
 
             // Confettiを停止・クリア
             if (window.confettiAnimationId) {
@@ -350,7 +350,7 @@ class QuizView
         JS
     end
 
-    def show_method_info!
+    def show_correct_modal!
         method_name = @quiz.answer_str.gsub("'", "\\'")
         doc_name = @quiz.answer_doc_name.gsub("'", "\\'")
         klass = @quiz.answer_klass
@@ -360,29 +360,33 @@ class QuizView
 
         JS.eval(<<~JS)
             (function() {
-                var existing = document.querySelector('.method-info');
-                if (existing) existing.remove();
-
                 var docName = '#{doc_name}';
                 var anchor = ('#{method_type}' === 'i' ? 'I_' : 'S_') +
                     docName.replace(/[^a-zA-Z0-9_]/g, function(c) {
                         return '--' + c.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0');
                     }).toUpperCase();
-                var doc_url = 'https://docs.ruby-lang.org/ja/3.3/class/#{owner}.html#' + anchor;
+                var docUrl = 'https://docs.ruby-lang.org/ja/3.3/class/#{owner}.html#' + anchor;
 
-                var info = document.createElement('div');
-                info.className = 'method-info';
-                info.innerHTML = `
-                    <div class="method-info-header">
-                        <span class="method-info-class">#{klass}</span>
-                        <span class="method-info-type">#{is_instance ? 'instance' : 'class'} method</span>
+                document.getElementById('correct-modal-body').innerHTML = `
+                    <div class="correct-modal-method">
+                        <div class="correct-modal-class">#{klass}</div>
+                        <div class="correct-modal-type">#{is_instance ? 'instance' : 'class'} method</div>
+                        <div class="correct-modal-method-name">#{method_name}</div>
+                        <a href="${docUrl}" target="_blank" class="correct-modal-doc-link">
+                            📚 Rubyドキュメントを見る
+                        </a>
                     </div>
-                    <div class="method-info-name">#{method_name}</div>
-                    <a href="${doc_url}" target="_blank" class="method-info-link">
-                        📚 Rubyドキュメントを見る
-                    </a>
                 `;
-                document.querySelector('.hints-card').appendChild(info);
+                document.getElementById('correct-modal').classList.remove('hidden');
+
+                document.getElementById('correct-modal-next-btn').onclick = function() {
+                    document.getElementById('correct-modal').classList.add('hidden');
+                    if (window.rubyController && window.rubyController.nextQuiz) {
+                        window.rubyController.nextQuiz();
+                    } else {
+                        location.reload();
+                    }
+                };
             })();
         JS
     end
@@ -550,7 +554,6 @@ class QuizView
 
             if is_correct
                 animate_score!(true)
-                show_correct_notification!
                 show_combo_notification!
             else
                 animate_score!(false)
@@ -583,15 +586,10 @@ class QuizView
                 JS
             elsif @quiz.is_corrected
                 trigger_confetti
-                show_method_info!
+                show_correct_modal!
                 JS.eval(<<~JS)
                     document.getElementById('answer-input').disabled = true;
-
-                    // 回答ボタンを次へボタンに変更
-                    const btn = document.getElementById('answer-button');
-                    btn.innerHTML = '<span class="button-text">Next!</span><span class="button-icon">🎉</span>';
-                    btn.classList.add('next-button');
-                    window.nextQuizReady = true;
+                    document.getElementById('answer-button').disabled = true;
                 JS
             end
         end.to_js

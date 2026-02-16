@@ -1119,6 +1119,129 @@ header small {
     transform: translateX(5px);
 }
 
+/* ===== Correct Modal ===== */
+.correct-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.correct-modal.hidden {
+    display: none;
+}
+
+.correct-modal-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(46, 204, 113, 0.4);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    animation: slideIn 0.4s ease;
+}
+
+.correct-modal-header {
+    margin-bottom: 1.5rem;
+}
+
+.correct-modal-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.correct-modal-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.correct-modal-method {
+    background: rgba(79, 172, 254, 0.08);
+    border: 1px solid rgba(79, 172, 254, 0.2);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.correct-modal-class {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    color: #4facfe;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.correct-modal-type {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 1rem;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+}
+
+.correct-modal-method-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2ecc71;
+    margin-bottom: 1rem;
+}
+
+.correct-modal-doc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    background: rgba(79, 172, 254, 0.15);
+    border: 1px solid rgba(79, 172, 254, 0.3);
+    border-radius: 0.5rem;
+    color: #4facfe;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: var(--transition);
+}
+
+.correct-modal-doc-link:hover {
+    background: rgba(79, 172, 254, 0.35);
+    transform: translateX(3px);
+}
+
+.correct-modal-next-btn {
+    width: 100%;
+    padding: 0.875rem;
+    background: var(--success-gradient);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 1.5rem;
+    letter-spacing: 0.05em;
+}
+
+.correct-modal-next-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+}
+
 /* ===== Flash Effects ===== */
 @keyframes flashCorrect {
     0%, 100% { box-shadow: inset 0 0 0 0 transparent; }
